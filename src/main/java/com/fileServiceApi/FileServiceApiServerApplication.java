@@ -18,7 +18,8 @@ import com.fileServiceApi.config.StorageProperties;
 @EnableConfigurationProperties({
     StorageProperties.class
 })
-public class FileServiceApiServerApplication implements CommandLineRunner {
+public class FileServiceApiServerApplication{
+//implements CommandLineRunner {
 	
 	@Autowired
 	StorageProperties storageProperties;
@@ -31,16 +32,12 @@ public class FileServiceApiServerApplication implements CommandLineRunner {
 		SpringApplication.run(FileServiceApiServerApplication.class, args);
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		logger.info("by Logger "+ storageProperties.getUploadDir());
-		fileStorageLocation = Paths.get(storageProperties.getUploadDir())
-	                .toAbsolutePath().normalize();
-		try {
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        } 
-	}
-
+	/*
+	 * @Override public void run(String... args) throws Exception {
+	 * logger.info("by Logger "+ storageProperties.getUploadDir());
+	 * fileStorageLocation = Paths.get(storageProperties.getUploadDir())
+	 * .toAbsolutePath().normalize(); try {
+	 * Files.createDirectories(this.fileStorageLocation); } catch (Exception ex) {
+	 * logger.error(ex.getMessage(), ex); } }
+	 */
 }
