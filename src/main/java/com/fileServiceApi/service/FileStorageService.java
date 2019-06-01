@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fileServiceApi.FileServiceApiServerApplication;
 import com.fileServiceApi.config.StorageProperties;
 
 @Service
@@ -38,22 +38,23 @@ public class FileStorageService {
     public String storeFile(MultipartFile file) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        if (file.isEmpty()) {
-        	 logger.info("file is empty");
-        }else {
-        	byte[] bytes;
-			try {
-				bytes = file.getBytes();
-				Path path = Paths.get(this.fileStorageLocation + "/"+file.getOriginalFilename());
-	            Files.write(path, bytes);
-	            logger.info(String.valueOf(bytes));
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				 logger.error(ex.getMessage(), ex);
-			}
-             
-        }      
-        return fileName;
+        try {
+            // Check if the file's name contains invalid characters
+            if(fileName.contains("..")) {
+            	logger.info("Sorry! Filename contains invalid path sequence ", fileName);
+                
+            }
+            // Copy file to the target location (Replacing existing file with the same name)
+            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            
+        } catch (IOException ex) {
+        	logger.error("Could not store file " + fileName + ". Please try again!", ex);
+           
+        }
+        return fileName;    
+       
     }
     
    
