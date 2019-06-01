@@ -30,5 +30,21 @@ Spring client uses HTTP Multipart requests to store and update file on the serve
     file.upload-dir=/Users/gajagaik/FileStorage/
 
 
+Create a Pojo class StorageProperties.java to get location of Upload Directory in current local system i.e Server 
+
+    @ConfigurationProperties(prefix = "file")
+    public class StorageProperties {
+    
+    	private String uploadDir;
+    
+        public String getUploadDir() {
+            return uploadDir;
+        }
+    
+        public void setUploadDir(String uploadDir) {
+            this.uploadDir = uploadDir;
+        }
+    }
+
 
 
