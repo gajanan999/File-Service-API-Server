@@ -32,6 +32,9 @@ Spring client uses HTTP Multipart requests to store and update file on the serve
 
 Create a Pojo class StorageProperties.java to get location of Upload Directory in current local system i.e Server 
 
+    package com.fileServiceApi.config;
+    
+    import org.springframework.boot.context.properties.ConfigurationProperties;
     @ConfigurationProperties(prefix = "file")
     public class StorageProperties {
     
