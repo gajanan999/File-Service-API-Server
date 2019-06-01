@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fileServiceApi.responsedata.UploadFileResponse;
 import com.fileServiceApi.service.FileStorageService;
 
 @RestController
@@ -25,21 +27,20 @@ public class FileApiController {
 	FileStorageService fileStorageService;
 	
 	 @PostMapping("/api/upload")
-	    // If not @RestController, uncomment this
-	    //@ResponseBody
-	    public ResponseEntity<?> uploadFile(
-	            @RequestParam("file") MultipartFile uploadfile) {
+	 public UploadFileResponse  uploadFile(
+	            @RequestParam("file") MultipartFile file) {
 
 	        logger.debug("Single file upload!");
 
-	        if (uploadfile.isEmpty()) {
-	            return new ResponseEntity("please select a file!", HttpStatus.OK);
-	        }
+	        String fileName = fileStorageService.storeFile(file);
 
-	        fileStorageService.storeFile(uploadfile);
+	        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+	                .path("/downloadFile/")
+	                .path(fileName)
+	                .toUriString();
 
-	        return new ResponseEntity("Successfully uploaded - " +
-	                uploadfile.getOriginalFilename(), new HttpHeaders(), HttpStatus.OK);
+	        return new UploadFileResponse(fileName, fileDownloadUri,
+	                file.getContentType(), file.getSize());
 
-	    }
+	  }
 }
