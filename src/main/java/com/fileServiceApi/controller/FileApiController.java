@@ -106,7 +106,7 @@ public class FileApiController {
 	}
 
 	/**
-	 * Delete the file from FileStorage using @DeleteMapping
+	 * Delete the file from FileStorage using @DeleteMapping- HTTP Method
 	 * 
 	 * @param fileName
 	 * @return
