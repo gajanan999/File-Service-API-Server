@@ -378,6 +378,47 @@ Create a Pojo class StorageProperties.java to get location of Upload Directory i
 
 ### File Download and upload using Mongodb
 
+Create Java Mongodb configuration file
+
+    package com.fileServiceApi.config;
+    
+    import org.springframework.beans.factory.annotation.Value;
+    import org.springframework.context.annotation.Bean;
+    import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+    import org.springframework.data.mongodb.core.MongoTemplate;
+    import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+    
+    import com.mongodb.MongoClient;
+    
+    public class SpringMongoConfig extends AbstractMongoConfiguration{
+    	
+    	@Value("mongo-database")
+    	private String database;
+    
+    	@Override
+    	public MongoClient mongoClient() {
+    		// TODO Auto-generated method stub
+    		 return new MongoClient("localhost");
+    	}
+    
+    	@Override
+    	protected String getDatabaseName() {
+    		// TODO Auto-generated method stub
+    		return "fileStorage";
+    	}
+    	
+    	@Bean
+    	public GridFsTemplate gridFsTemplate() throws Exception {
+    	    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
+    	}
+    
+    	@Bean
+        public MongoTemplate mongoTemplate() throws Exception {
+            return new MongoTemplate(mongoClient(), database);
+        }
+    }
+
+
 Create a controller which will handle the REST HTTP request **FileApiMongoController**
     
         package com.fileServiceApi.controller;
@@ -608,5 +649,31 @@ it will extends the MongoRepository<K,T> class
     	
     	
     }
+
+
+### Create a custom exception FileNotFoundException
+
+    package com.fileServiceApi.exception;
+
+    import org.springframework.http.HttpStatus;
+    import org.springframework.web.bind.annotation.ResponseStatus;
     
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public class FileNotFoundException extends RuntimeException{
+    
+    	 /**
+    	 * 
+    	 */
+    	private static final long serialVersionUID = 1L;
+    
+    	public FileNotFoundException(String message) {
+    	        super(message);
+    	    }
+    
+    	    public FileNotFoundException(String message, Throwable cause) {
+    	        super(message, cause);
+    	    }
+    }
+
+
 
