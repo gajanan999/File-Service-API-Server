@@ -29,11 +29,10 @@ import com.fileServiceApi.service.FileStorageService;
 @RestController
 public class FileApiController {
 
-	private static final Logger logger = LoggerFactory.getLogger(FileApiController.class);
-
 	@Autowired
 	FileStorageService fileStorageService;
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(FileApiMongoController.class);
 	
 	/**
 	 * Upload a new File in the File Storage using @PostMapping
@@ -43,15 +42,12 @@ public class FileApiController {
 	@PostMapping("/api/upload")
 	public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
 
-		logger.debug("Entering in uploadFile method");
 
 		String fileName = fileStorageService.storeFile(file);
 
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
-		logger.debug("Exiting from uploadFile method");
 		return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
-
 	}
 
 	
@@ -63,16 +59,12 @@ public class FileApiController {
 	 */
 	@GetMapping("api/downloadFile/{fileName:.+}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-		logger.debug("Entering in downloadFile method");
+
 		String contentType = null;
 		Resource resource = null;
 		String file = "";
 		if (fileStorageService.checkFileExists(fileName)) {
-			// Load file as Resource
 			resource = fileStorageService.loadFileAsResource(fileName);
-
-			// Try to determine file's content type
-
 			try {
 				contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 			} catch (IOException ex) {
@@ -80,7 +72,6 @@ public class FileApiController {
 			}
 
 		}
-		// Fallback to the default content type if type could not be determined
 		if (contentType == null) {
 			contentType = "application/octet-stream";
 		}
