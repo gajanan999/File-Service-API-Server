@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,7 @@ import com.fileServiceApi.service.FileStorageService;
  *
  */
 @RestController
+@RequestMapping("/api/")
 public class FileApiController {
 
 	@Autowired
@@ -65,11 +67,10 @@ public class FileApiController {
 	 * @param file
 	 * @return
 	 */
-	@PostMapping(value = "/api/upload", consumes = { "multipart/form-data" })
+	@PostMapping(value = "upload", consumes = { "multipart/form-data" })
 	public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
 
 		String fileName = fileStorageService.storeFile(file);
-
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
 		return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
@@ -82,9 +83,9 @@ public class FileApiController {
 	 * @param request
 	 * @return
 	 */
-	@GetMapping("api/downloadFile/{fileName:.+}")
+	@GetMapping("download/{fileName:.+}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-
+		
 		String contentType = null;
 		Resource resource = null;
 		String file = "";
@@ -95,13 +96,11 @@ public class FileApiController {
 			} catch (IOException ex) {
 				logger.info("Could not determine file type.", ex);
 			}
-
 		}
 		if (contentType == null) {
 			contentType = "application/octet-stream";
 		}
 		file = null != resource ? "resource.getFilename()" : fileName + " is Not Exists";
-		logger.debug("Exiting  from downloadFile method");
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file + "\"").body(resource);
 	}
@@ -112,10 +111,10 @@ public class FileApiController {
 	 * @param fileName
 	 * @return
 	 */
-	@DeleteMapping("api/delete/{fileName:.+}")
+	@DeleteMapping("delete/{fileName:.+}")
 	public DeleteFileResponse deleteFile(@PathVariable String fileName) {
-		String message = "Something Went WRONG! May be file not found or you don't have access to delete the File";
-		String operationStatus = "File Delete operation Failed";
+		String message = "";
+		String operationStatus = "";
 		if (fileStorageService.checkFileExists(fileName)) {
 			if (fileStorageService.deleteFile(fileName)) {
 				message = "File Deleted Successfully";
@@ -136,7 +135,7 @@ public class FileApiController {
 	 * @param fileName
 	 * @return
 	 */
-	@PutMapping("/api/updateFile")
+	@PutMapping("update")
 	public UpdateFileResponse updateFile(@RequestParam("file") MultipartFile file,
 			@RequestParam("fileName") String fileName) {
 		String message = "";
