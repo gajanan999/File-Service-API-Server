@@ -11,9 +11,10 @@ the file in the File storage. currently I have used local storage to store a fil
 Spring client uses HTTP Multipart requests to store and update file on the server. for that we have do some configuration in server application.properties as follows
 
 ## Before bulding project as maven-build 
+     **i.e file.upload-dir=/Users/gajagaik/FileStorage/**
     (@Test run issue may occure to avoid that do the following step)
     You have to keep a cute.jpeg file in the fileStoarge location in the local system and file storage location has been mentioned in application.properties
- **   i.e file.upload-dir=/Users/gajagaik/FileStorage/**
+
     
 
 
