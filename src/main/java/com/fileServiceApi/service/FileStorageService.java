@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fileServiceApi.config.StorageProperties;
+import com.fileServiceApi.exception.FileNotFoundException;
 
 @Service
 public class FileStorageService {
@@ -67,13 +68,14 @@ public class FileStorageService {
 				return resource;
 			} else {
 				logger.error("File not found " + fileName);
+				 throw new FileNotFoundException("File not found " + fileName);
 
 			}
 		} catch (MalformedURLException ex) {
 			logger.error("File not found " + fileName, ex);
-
+			throw new FileNotFoundException("File not found " + fileName, ex);
 		}
-		return resource;
+		
 	}
 
 	public boolean deleteFile(String fileName) {

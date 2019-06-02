@@ -105,7 +105,7 @@ public class FileStorageMongoService {
 		return resourceVo;
 	}
 	
-	public Resource loadFileAsResource(String fileName,Path fileStorageLocation) {
+	public Resource loadFileAsResource(String fileName,Path fileStorageLocation) throws FileNotFoundException {
 		Resource resource = null;
 		try {
 			Path filePath = fileStorageLocation.resolve(fileName).normalize();
@@ -114,7 +114,7 @@ public class FileStorageMongoService {
 				return resource;
 			} else {
 				logger.error("File not found " + fileName);
-
+				throw new FileNotFoundException("File not found " + fileName);
 			}
 		} catch (MalformedURLException ex) {
 			logger.error("File not found " + fileName, ex);
