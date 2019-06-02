@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fileServiceApi.config.StorageProperties;
 import com.fileServiceApi.exception.FileNotFoundException;
+import com.fileServiceApi.exception.FileStorageException;
 
 /**
  * This is service class which is used to handle the business logic in our case it is nothing but File Conversion
@@ -35,11 +36,11 @@ public class FileStorageService {
 	@Autowired
 	public FileStorageService(StorageProperties storageProperties) {
 		this.fileStorageLocation = Paths.get(storageProperties.getUploadDir()).toAbsolutePath().normalize();
-
 		try {
 			Files.createDirectories(this.fileStorageLocation);
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
+			 throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
 		}
 	}
 
@@ -51,7 +52,7 @@ public class FileStorageService {
 			// Check if the file's name contains invalid characters
 			if (fileName.contains("..")) {
 				logger.info("Sorry! Filename contains invalid path sequence ", fileName);
-
+				
 			}
 			// Copy file to the target location (Replacing existing file with the same name)
 			Path targetLocation = this.fileStorageLocation.resolve(fileName);
