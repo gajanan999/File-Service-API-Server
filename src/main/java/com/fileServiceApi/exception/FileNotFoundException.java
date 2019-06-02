@@ -3,19 +3,24 @@ package com.fileServiceApi.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * This class ha been written to throw the custom exception FileNotFoundException
+ * @author gajagaik
+ *
+ */
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class FileNotFoundException extends RuntimeException{
+public class FileNotFoundException extends RuntimeException {
 
-	 /**
-	 * 
-	 */
+	/**
+	* 
+	*/
 	private static final long serialVersionUID = 1L;
 
 	public FileNotFoundException(String message) {
-	        super(message);
-	    }
+		super(message);
+	}
 
-	    public FileNotFoundException(String message, Throwable cause) {
-	        super(message, cause);
-	    }
+	public FileNotFoundException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

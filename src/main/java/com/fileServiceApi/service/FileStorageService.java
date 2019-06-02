@@ -20,6 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fileServiceApi.config.StorageProperties;
 import com.fileServiceApi.exception.FileNotFoundException;
 
+/**
+ * This is service class which is used to handle the business logic in our case it is nothing but File Conversion
+ * @author gajagaik
+ *
+ */
 @Service
 public class FileStorageService {
 
@@ -41,7 +46,7 @@ public class FileStorageService {
 	public String storeFile(MultipartFile file) {
 		// Normalize file name
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-		logger.info(" FileName: ",fileName);
+		logger.info(" FileName: ", fileName);
 		try {
 			// Check if the file's name contains invalid characters
 			if (fileName.contains("..")) {
@@ -69,14 +74,14 @@ public class FileStorageService {
 				return resource;
 			} else {
 				logger.error("File not found " + fileName);
-				 throw new FileNotFoundException("File not found " + fileName);
+				throw new FileNotFoundException("File not found " + fileName);
 
 			}
 		} catch (MalformedURLException ex) {
 			logger.error("File not found " + fileName, ex);
 			throw new FileNotFoundException("File not found " + fileName, ex);
 		}
-		
+
 	}
 
 	public boolean deleteFile(String fileName) {

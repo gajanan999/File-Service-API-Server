@@ -8,22 +8,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
+
+/**
+ * This Class has been created to solved the Logging cross-cutting concern
+ * @author gajagaik
+ *
+ */
 @Aspect
 @Configuration
 public class LoggerAspect {
-	
+
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
 
 	@Before("execution(* com.fileServiceApi.*.*.*(..))")
-	public void before(JoinPoint joinPoint){
-		//Advice
+	public void before(JoinPoint joinPoint) {
+		// Advice
 		logger.info("Entering in method {}", joinPoint);
 	}
-	
+
 	@After(value = "execution(* com.fileServiceApi.*.*.*(..))")
 	public void after(JoinPoint joinPoint) {
 		logger.info("After execution of {}", joinPoint);
 	}
-	
+
 }

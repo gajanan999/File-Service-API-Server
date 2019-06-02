@@ -15,21 +15,25 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class FileServiceApiServerApplicationTests extends AbstractTest {
-	
-	
-   @Override
-   @Before
-   public void setUp() {
-      super.setUp();
-   }
 
+	@Override
+	@Before
+	public void setUp() {
+		super.setUp();
+	}
+
+	/**
+	 * This is the One Unit Test case to see the Download functionality works
+	 * @throws Exception
+	 */
 	@Test
 	public void downloadFile() throws Exception {
-	// Note before running the test you have keep cute.jpeg file in fileStorage location which is mentioned in application.properties
-	   String uri = "/api/downloadFile/cute.jpeg";
-	   MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
-	      .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();  
-	   int status = mvcResult.getResponse().getStatus();
-	   assertEquals(200, status);
+		// Note before running the test you have keep cute.jpeg file in fileStorage
+		// location which is mentioned in application.properties
+		String uri = "/api/downloadFile/cute.jpeg";
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).accept(MediaType.APPLICATION_JSON_VALUE))
+				.andReturn();
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
 	}
 }

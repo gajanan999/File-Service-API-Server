@@ -27,40 +27,46 @@ import com.fileServiceApi.responsedata.UpdateFileResponse;
 import com.fileServiceApi.responsedata.UploadFileResponse;
 import com.fileServiceApi.service.FileStorageService;
 
+
+/**
+ * This Class is nothing but the Rest Controller which handles the HTTP request from the client
+ * @author gajagaik
+ *
+ */
 @RestController
 public class FileApiController {
 
 	@Autowired
 	FileStorageService fileStorageService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FileApiController.class);
-	
+
 	@Value("${FILE_UPLOAD}")
 	private String FILE_UPLOAD;
-	
+
 	@Value("${SUCCESS}")
 	private String SUCCESS;
-	
+
 	@Value("${NOT_AUTHORIZED}")
 	private String NOT_AUTHORIZED;
-	
+
 	@Value("${FAILED}")
 	private String FAILED;
-	
+
 	@Value("${UPDATE_FAIL}")
 	private String UPDATE_FAIL;
-	
+
 	@Value("${FILE_NOT_EXISTS}")
 	private String FILE_NOT_EXISTS;
-	
+
 	/**
 	 * Upload a new File in the File Storage using @PostMapping
+	 * 
 	 * @param file
 	 * @return
 	 */
-	@PostMapping(value="/api/upload", consumes = {"multipart/form-data"})
+	@PostMapping(value = "/api/upload", consumes = { "multipart/form-data" })
 	public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-
 
 		String fileName = fileStorageService.storeFile(file);
 
@@ -69,9 +75,9 @@ public class FileApiController {
 		return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
 	}
 
-	
 	/**
 	 * Download the File from File Storage using @GetMapping
+	 * 
 	 * @param fileName
 	 * @param request
 	 * @return
@@ -99,9 +105,10 @@ public class FileApiController {
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file + "\"").body(resource);
 	}
-	
+
 	/**
-	 *  Delete the file from FileStorage using @DeleteMapping 
+	 * Delete the file from FileStorage using @DeleteMapping
+	 * 
 	 * @param fileName
 	 * @return
 	 */
@@ -120,21 +127,23 @@ public class FileApiController {
 		}
 		return new DeleteFileResponse(fileName, operationStatus, message);
 	}
-	
-	
+
 	/**
-	 * Update a file in the file storage with new file which is passed in HTTP : PUT method call 
+	 * Update a file in the file storage with new file which is passed in HTTP : PUT
+	 * method call
+	 * 
 	 * @param file
 	 * @param fileName
 	 * @return
 	 */
 	@PutMapping("/api/updateFile")
-	public UpdateFileResponse updateFile(@RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName) {
+	public UpdateFileResponse updateFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("fileName") String fileName) {
 		String message = "";
 		String operationStatus = "";
-		String fileDownloadUri="";
-		String updatedFileName="";
-		
+		String fileDownloadUri = "";
+		String updatedFileName = "";
+
 		if (fileStorageService.checkFileExists(fileName)) {
 			if (fileStorageService.deleteFile(fileName)) {
 				updatedFileName = fileStorageService.storeFile(file);
@@ -142,15 +151,15 @@ public class FileApiController {
 						.path(fileName).toUriString();
 				message = FILE_UPLOAD;
 				operationStatus = SUCCESS;
-			}else {
+			} else {
 				message = NOT_AUTHORIZED;
 				operationStatus = FAILED;
 			}
-		}else {
+		} else {
 			message = UPDATE_FAIL;
 			operationStatus = FAILED;
 		}
-		return new UpdateFileResponse(updatedFileName, operationStatus, message,fileDownloadUri);
+		return new UpdateFileResponse(updatedFileName, operationStatus, message, fileDownloadUri);
 	}
 
 }
