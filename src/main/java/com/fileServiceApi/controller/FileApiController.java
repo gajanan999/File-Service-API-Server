@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -32,14 +33,32 @@ public class FileApiController {
 	@Autowired
 	FileStorageService fileStorageService;
 	
-	private static final Logger logger = LoggerFactory.getLogger(FileApiMongoController.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileApiController.class);
+	
+	@Value("${FILE_UPLOAD}")
+	private String FILE_UPLOAD;
+	
+	@Value("${SUCCESS}")
+	private String SUCCESS;
+	
+	@Value("${NOT_AUTHORIZED}")
+	private String NOT_AUTHORIZED;
+	
+	@Value("${FAILED}")
+	private String FAILED;
+	
+	@Value("${UPDATE_FAIL}")
+	private String UPDATE_FAIL;
+	
+	@Value("${FILE_NOT_EXISTS}")
+	private String FILE_NOT_EXISTS;
 	
 	/**
 	 * Upload a new File in the File Storage using @PostMapping
 	 * @param file
 	 * @return
 	 */
-	@PostMapping("/api/upload")
+	@PostMapping(value="/api/upload", consumes = {"multipart/form-data"})
 	public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
 
 
@@ -52,7 +71,7 @@ public class FileApiController {
 
 	
 	/**
-	 *  Download the File from File Storage using @GetMapping
+	 * Download the File from File Storage using @GetMapping
 	 * @param fileName
 	 * @param request
 	 * @return
@@ -68,7 +87,7 @@ public class FileApiController {
 			try {
 				contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 			} catch (IOException ex) {
-				logger.info("Could not determine file type.");
+				logger.info("Could not determine file type.", ex);
 			}
 
 		}
@@ -96,8 +115,8 @@ public class FileApiController {
 				operationStatus = "SUCCESS";
 			}
 		} else {
-			message = "File is not exists in the File Storage";
-			operationStatus = "FAILED";
+			message = FILE_NOT_EXISTS;
+			operationStatus = FAILED;
 		}
 		return new DeleteFileResponse(fileName, operationStatus, message);
 	}
@@ -121,15 +140,15 @@ public class FileApiController {
 				updatedFileName = fileStorageService.storeFile(file);
 				fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 						.path(fileName).toUriString();
-				message = "File Successfully updated";
-				operationStatus = "SUCCESS";
+				message = FILE_UPLOAD;
+				operationStatus = SUCCESS;
 			}else {
-				message = "File can not be updated cause may be you don't have access to it";
-				operationStatus = "FAILED";
+				message = NOT_AUTHORIZED;
+				operationStatus = FAILED;
 			}
 		}else {
-			message = "File is not exists in the File Storage for Update Operation";
-			operationStatus = "FAILED";
+			message = UPDATE_FAIL;
+			operationStatus = FAILED;
 		}
 		return new UpdateFileResponse(updatedFileName, operationStatus, message,fileDownloadUri);
 	}
