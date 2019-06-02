@@ -12,8 +12,8 @@ Spring client uses HTTP Multipart requests to store and update file on the serve
 
 ## Before bulding project as maven-build 
      **file.upload-dir=/Users/gajagaik/FileStorage/**
-    (@Test run issue may occure to avoid that do the following step)
-    You have to keep a cute.jpeg file in the fileStoarge location in the local system and file storage location has been mentioned in application.properties
+        (@Test run issue may occure to avoid that do the following step)
+        You have to keep a cute.jpeg file in the fileStoarge location in the local system and file storage location has been mentioned in application.properties
 
     
 
